@@ -1,8 +1,8 @@
 import React from 'react';
-import { Combobox, ComboboxInput, ComboboxOption, ComboboxPopover } from '@reach/combobox';
+import { Combobox, ComboboxInput, ComboboxOption, ComboboxPopover,ComboboxList } from '@reach/combobox';
 import usePlacesAutocomplete, {
   getGeocode,
-  getLating
+  getLatLng
 } from 'use-places-autocomplete'; 
 import "@reach/combobox/styles.css"
 
@@ -15,22 +15,26 @@ export function Search(){
     clearSuggestions
   } = usePlacesAutocomplete({
     requestOptions:{
-      location:{ lat:()=>51.5072, lng:()=>-0.1276},
+      location:{ lat:()=>51.5072178, lng:()=>-0.1275862},
       radius:200*1000
     }
   })
   return(
-  <Combobox onSelect={(address)=>{
-    setValue(address,false);
-    clearSuggestions();
-    console.log(address)
-    try{
-      // what to do after the location has been selected
+  <Combobox onSelect={ 
+    async (address)=>{
+      setValue(address,false);
+      clearSuggestions();
+      console.log(address)
+      try{
+        const results = await getGeocode({address})
+        const {lat, lng} = await getLatLng(results[0]) //only the first result is used
+      }
+      catch(error){
+        console.log(Error)
+      }
+      console.log()
     }
-    catch(error){
-      console.log(Error)
-    }
-  }}
+  }
   >
     <ComboboxInput 
       value={value} 
@@ -38,10 +42,12 @@ export function Search(){
       disabled={!ready}
       placeholder="enter Address"/>
     <ComboboxPopover>
-      {status==="OK" && data.map(({id,description})=>(
-      <ComboboxOption 
-        key={id}
-        value={description}/>))}
+      <ComboboxList>
+        {status==="OK" && data.map(({id,description})=>(
+        <ComboboxOption 
+          key={id}
+          value={description}/>))}
+      </ComboboxList>
     </ComboboxPopover>
   </Combobox>
   )
