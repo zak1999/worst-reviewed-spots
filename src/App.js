@@ -6,46 +6,91 @@ import {
 import * as api from "./yelp-api/api"
 import './App.css';
 import { Search } from './components/search';
-import ResultList from './components/ResultList';
 
-
-
-const libraries = ["places"];
-const searchParams = {
-  term:"Bar",
-  longitude:-0.1275862,
-  latitude:51.5072178,
-  limit:50,
-}
 function App() {
   const {isLoaded,loadError} = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-    libraries:libraries
+    libraries:["places"]
   })
-  const [searchVal, setSearchVal] = useState("")
-  //const [businesses,amountResults,searchParams,setSearchParams] = useSearchYelp("","London")
-  
+  const [searchTerm, setSearchTerm] = useState("Barbershop");
+  const [searchLocation, setSearchLocation] = useState("");
+  const [last1,setLast1] = useState(undefined);
+  const [loading,setLoading] = useState(false);
+
+  const collectBottomOne = async (total) => {
+    console.log("total",total)
+    var offsetNum = 0
+    if (10 < total > 1000) {// checks if there if the total needs to be offsetted or not
+      offsetNum = (total - 10)
+    }else if (total > 1000){// the max the API can take is limit+offset
+      offsetNum = 900
+    }
+    const searchParams = {
+      term:searchTerm,
+      longitude:searchLocation.lng,
+      latitude:searchLocation.lat,
+      limit:10,
+      offset:offsetNum,
+      sort_by:"rating",
+    }
+    console.log(searchParams)
+    
+    try{
+      const rawData = await api.get("/businesses/search",searchParams)
+      const res = await rawData.json()
+      const businesses = res.businesses
+      const lastOne = res.businesses[businesses.length-1]
+      console.log("last one", lastOne)
+      return lastOne
+    }
+    catch(e){
+      console.error(e)
+    }
+  }
+
+  const fetchBusinessTotal = async ()=> {
+    const searchParams = {
+      term:searchTerm,
+      longitude:searchLocation.lng,
+      latitude:searchLocation.lat,
+      limit:1, // only one as the only the number of results is important in this fetch.
+      sort_by:"rating",
+    }
+    try{
+      const rawData = await api.get("/businesses/search",searchParams)
+      const res = await rawData.json()
+      const total = res.total
+      console.log("total", total)
+      return total
+    }
+    catch(e){
+      console.error(e)
+    }
+  }
+
+
+
   function handleSearch(e){
     e.preventDefault();
-    const fetchDataFirstTime = async ()=>{
-      try{
-        const rawData = await api.get("/businesses/search",searchParams)
-        const res = await rawData.json()
-        console.log("res",res)
-        // setBusinesses(res.businesses)
-        // setAmount(res.total)
-      }
-      catch(e){
-        console.error(e)
-      }
+    setLoading(true);
+    setLast1(undefined);
+    if (searchLocation===""){
+      console.log("something went wrong")//pormpt user to look up a location
+      return // exit the function
+    }    
+    const flow = async () =>{
+      const res = await fetchBusinessTotal();
+      const last1 = await collectBottomOne(res);
+      await setLast1(last1);
+      setLoading(false);
     }
-    fetchDataFirstTime();
-    console.log(searchVal);
+    flow()
+    console.log(last1)
   }
 
   if (loadError) return "Error loading maps";
-  if (!isLoaded) return "Loading Maps"
-  
+  if (!isLoaded) return "Loading Maps";
+
   return (
     <>
    
@@ -57,14 +102,16 @@ function App() {
             <h2>Lorem </h2>
           </div>
           <form>
-            <input type={"text"} placeholder="Temporary SearchBar" id="autocomplete" onChange={e=>setSearchVal(e.target.value)}></input>
-            <Search/>
+            <input type={"text"} placeholder="Temporary SearchBar" id="autocomplete" onChange={e=>setSearchTerm(e.target.value)}></input>
+            <Search setSearchLocation={setSearchLocation}/>
             <button onClick={e=>handleSearch(e)}>SearcH?</button> 
+
           </form>
         </div>
       </section>
       <div className='Result'>
-        <ResultList />
+        {loading && <p>LOADING....</p>}
+        {last1 && <p>found</p>}
       </div>
     </body>
     </>

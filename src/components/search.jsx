@@ -6,7 +6,7 @@ import usePlacesAutocomplete, {
 } from 'use-places-autocomplete'; 
 import "@reach/combobox/styles.css"
 
-export function Search(){
+export function Search({setSearchLocation}){
   const {
     ready, 
     value, 
@@ -24,15 +24,15 @@ export function Search(){
     async (address)=>{
       setValue(address,false);
       clearSuggestions();
-      console.log(address)
       try{
         const results = await getGeocode({address})
         const {lat, lng} = await getLatLng(results[0]) //only the first result is used
+        setSearchLocation({address,lat,lng})
       }
       catch(error){
+        setSearchLocation(address)
         console.log(Error)
       }
-      console.log()
     }
   }
   >
