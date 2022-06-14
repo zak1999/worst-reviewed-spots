@@ -1,0 +1,97 @@
+
+/* The card */
+.card {
+  display: flex;
+
+  position: relative;
+  height: 450px;
+  max-width: 45%;
+  width: 900px;
+  padding: 30px;
+  margin: 100px auto;
+  background-color: #f9f7f6;
+  border-radius: 1em;
+  
+  -webkit-box-shadow: 10px 10px 93px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 10px 10px 93px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 10px 10px 93px 0px rgba(0, 0, 0, 0.75); 
+}
+
+img{
+  display: block;
+  max-width:360px;
+  max-height:360px;
+  width: auto;
+  height: auto;
+  object-fit: cover;
+  -webkit-box-shadow: 10px 10px 60px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 10px 10px 60px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 10px 10px 60px 0px rgba(0, 0, 0, 0.75);
+}
+.left{
+margin-top: 30px;
+}
+/* Right side of the card */
+.right {
+  margin-left: 40px;
+  margin-right: 20px;
+  flex: auto; }
+
+.business-name { 
+  padding-top: 15px;
+  font-size: 1.5rem;
+  color: #4B4B4B; 
+}
+.top{
+  justify-content: space-between;
+}
+.address{
+  display: flex;
+  flex-direction: column;
+  justify-content: right;
+}
+.address-line{
+  font-size: x-small;
+  margin: 0;
+  padding: 0;
+  justify-self: right;
+}
+.separator {
+  margin-top: 10px;
+  border: 1px solid #C3C3C3; 
+}
+.points{
+  font-size: 22px;
+  font-weight: 200;
+}
+.gallery{
+  justify-content: space-between;
+  display: flex;
+  margin-top: 20px;
+  
+}
+.thumbnail{
+  display: block;
+  max-width:100px;
+  max-height:100px;
+  width: auto;
+  height: auto;
+}
+/* Floating action button */
+.fab {
+  position: absolute;
+  left: auto;
+  top: auto;
+  padding-top: 18px;
+  box-sizing: border-box;
+  background-color: #1875D0;
+  width: 80px;
+  height: 80px;
+  color: white;
+  text-align: center;
+
+  border-radius: 15%;
+
+  -webkit-box-shadow: 10px 10px 50px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 10px 10px 50px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 10px 10px 50px 0px rgba(0, 0, 0, 0.75); }

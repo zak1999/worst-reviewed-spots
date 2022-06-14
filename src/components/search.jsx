@@ -5,6 +5,7 @@ import usePlacesAutocomplete, {
   getLatLng
 } from 'use-places-autocomplete'; 
 import "@reach/combobox/styles.css"
+// import "./search.css"
 
 export function Search({setSearchLocation}){
   const {
@@ -20,7 +21,9 @@ export function Search({setSearchLocation}){
     }
   })
   return(
-  <Combobox onSelect={ 
+  <Combobox 
+  className='combobox'
+  onSelect={ 
     async (address)=>{
       setValue(address,false);
       clearSuggestions();
@@ -37,10 +40,11 @@ export function Search({setSearchLocation}){
   }
   >
     <ComboboxInput 
+      className='comboinput'
       value={value} 
       onChange={(e)=>{setValue(e.target.value)}}
       disabled={!ready}
-      placeholder="enter Address"/>
+      placeholder="Newcastle upon Tyne, UK"/>
     <ComboboxPopover>
       <ComboboxList>
         {status==="OK" && data.map(({id,description})=>(
